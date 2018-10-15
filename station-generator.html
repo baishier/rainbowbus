@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>彩虹巴士报站图片生成器</title>
+</head>
+<body onload="javascript:gen();">
+	班次：
+	<input id="banci" type="text" value="W66">
+	<br> 早晚：
+	<input id="zaowan" type="text" value="早  班">
+	<br> 路线名称：
+	<input id="luxianmingcheng" type="text" value="物资学院-望京">
+	<br> 到站：
+	<input id="daozhan" type="text" value="物资学院路地铁站A口">
+	<br> 下站：
+	<input id="xiayizhan" type="text" value="草房地铁站B口">
+	<br>
+	<input type="button" value="生成" onclick="javascript:gen()">
+	<br>
+	<!-- 添加canvas标签，并加上红色边框以便于在页面上查看 -->
+	<canvas id="myCanvas" width="400px" height="300px"
+		style="border: 1px solid red;">
+您的浏览器不支持canvas标签。
+</canvas>
+
+	<script type="text/javascript">
+		var gen = function() {
+			//文案定义
+			//班次
+			var banci = document.getElementById("banci").value ? document
+					.getElementById("banci").value : "W66";
+			var zaowan = document.getElementById("zaowan").value ? document
+					.getElementById("zaowan").value : "早  班";
+			var luxianmingcheng = document.getElementById("luxianmingcheng").value ? document
+					.getElementById("luxianmingcheng").value
+					: "物资学院-望京";
+			var daozhan = document.getElementById("daozhan").value ? document
+					.getElementById("daozhan").value : "物资学院路地铁站A口";
+			var xiayizhan = document.getElementById("xiayizhan").value ? document
+					.getElementById("xiayizhan").value
+					: "草房地铁站B口";
+			var basetextstyle = "#FF6666";
+			var basebackstyle = "#99CCFF";
+
+			//获取Canvas对象(画布)
+			var canvas = document.getElementById("myCanvas");
+			//简单地检测当前浏览器是否支持Canvas对象，以免在一些不支持html5的浏览器中提示语法错误
+			if (canvas.getContext) {
+				//获取对应的CanvasRenderingContext2D对象(画笔)
+				var ctx = canvas.getContext("2d");
+				ctx.fillStyle = "#ffffff";
+				ctx.fillRect(0, 0, 400, 300);
+				var img = new Image();
+				img.onload = function() {
+					ctx.drawImage(img, 260, 50, 66, 66);
+				};
+				img.src = "http://www.rainbow-bus.cn/img/rainbow/logo.png";
+				ctx.fillStyle = basebackstyle;
+				ctx.fillRect(0, 5, 400, 25);
+				ctx.fillStyle = basebackstyle;
+				ctx.fillRect(0, 270, 400, 25);
+
+				ctx.fillStyle = basebackstyle;
+				ctx.fillRect(20, 50, 100, 50);
+
+				ctx.fillStyle = basebackstyle;
+				ctx.fillRect(20, 150, 360, 50);
+
+				//设置字体样式
+				ctx.font = "25px Courier New";
+				//设置字体填充颜色
+				ctx.fillStyle = basetextstyle;
+				//从坐标点(50,50)开始绘制文字
+				ctx.fillText(banci, 50, 80);
+				ctx.fillText(zaowan, 130, 80);
+				ctx.fillText(luxianmingcheng, 50, 130);
+				ctx.fillText("到站：" + daozhan, 50, 180);
+				ctx.fillText("下一站：" + xiayizhan, 50, 250);
+
+			}
+		}
+	</script>
+	<br>
+	<a href="https://github.com/baishier/rainbowbus">github</a>
+
+
+</body>
+</html>
