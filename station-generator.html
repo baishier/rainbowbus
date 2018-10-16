@@ -3,12 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <title>彩虹巴士报站图片生成器</title>
+<script src="jscolor.js"></script>
+<style>
+body {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	font-family: sans-serif;
+}
+
+#canvas {
+	position: absolute;
+	left: 0;
+}
+
+#starCanvasDiv {
+	background-color: white;
+}
+
+a:hover {
+	color: #A0A0A0;
+	text-decoration: none;
+}
+
+a:active {
+	color: #A0A0A0;
+	text-decoration: none;
+}
+
+a:visited {
+	color: #A0A0A0;
+	text-decoration: none;
+}
+
+a:link {
+	color: #A0A0A0;
+	text-decoration: none;
+}
+</style>
 </head>
 <body onload="javascript:gen();">
+	<div
+		style="text-align: center; position: fixed; background-color: black; height: 0px; width: 100%; top: 0px; opacity: 0.5;">
+		<p style="text-align: center; font-size: 30px; color: #A0A0A0;">百释而然</p>
+	</div>
+	<div
+		style="text-align: center; position: fixed; background-color: black; height: 25px; width: 100%; bottom: 0px; opacity: 0.5;">
+		<a href="http://www.miitbeian.gov.cn/" style="opacity: 1;"
+			target="_blank">京ICP备14044747号</a>
+	</div>
+<br><br><br><br><br>
 	班次：
 	<input id="banci" type="text" value="W66">
 	<br> 早晚：
-	<input id="zaowan" type="text" value="早  班">
+	<input id="zaowan" type="text" value="早  班" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)" >
+	<br> 运营商：
+	<input id="yunyingshang" type="text" value="彩虹">
 	<br> 路线名称：
 	<input id="luxianmingcheng" type="text" value="物资学院-望京">
 	<br> 到站：
@@ -16,7 +66,15 @@
 	<br> 下站：
 	<input id="xiayizhan" type="text" value="草房地铁站B口">
 	<br>
-	<input type="button" value="生成" onclick="javascript:gen()">
+	<button
+		class="jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)'}">
+		字体颜色</button>
+	<button
+		class="jscolor {valueElement:'chosen-value', onFineChange:'setBackColor(this)'}">
+		背景颜色</button>
+<!-- 	<input type="button" value="生成" onclick="javascript:gen();"> -->
+	<input type="button" value="下载"
+		onclick="javascript:downloadimg(gen(),'pic.jpg');">
 	<br>
 	<!-- 添加canvas标签，并加上红色边框以便于在页面上查看 -->
 	<canvas id="myCanvas" width="400px" height="300px"
@@ -25,8 +83,26 @@
 </canvas>
 
 	<script type="text/javascript">
+		var basetextstyle = "#FF6600";
+		var basebackstyle = "#99CCF0";
+		function setTextColor(picker) {
+			basetextstyle = '#' + picker.toString();
+			gen();
+		}
+		function setBackColor(picker) {
+			basebackstyle = '#' + picker.toString();
+			gen();
+		}
+
+		var downloadimg = function(canvas, name) {
+			var a = document.createElement("a");
+			a.href = canvas.toDataURL();
+			a.download = name;
+			a.click();
+		}
 		var gen = function() {
 			//文案定义
+			var canvas = document.getElementById("myCanvas");
 			//班次
 			var banci = document.getElementById("banci").value ? document
 					.getElementById("banci").value : "W66";
@@ -40,26 +116,28 @@
 			var xiayizhan = document.getElementById("xiayizhan").value ? document
 					.getElementById("xiayizhan").value
 					: "草房地铁站B口";
-			var basetextstyle = "#FF6666";
-			var basebackstyle = "#99CCFF";
+			var yunyingshang = document.getElementById("yunyingshang").value ? document
+					.getElementById("yunyingshang").value
+					: "彩虹";
 
 			//获取Canvas对象(画布)
-			var canvas = document.getElementById("myCanvas");
 			//简单地检测当前浏览器是否支持Canvas对象，以免在一些不支持html5的浏览器中提示语法错误
 			if (canvas.getContext) {
 				//获取对应的CanvasRenderingContext2D对象(画笔)
 				var ctx = canvas.getContext("2d");
 				ctx.fillStyle = "#ffffff";
 				ctx.fillRect(0, 0, 400, 300);
-				var img = new Image();
-				img.onload = function() {
-					ctx.drawImage(img, 260, 50, 66, 66);
-				};
-				img.src = "http://www.rainbow-bus.cn/img/rainbow/logo.png";
+				//var img = new Image();
+				//解决 canvas 跨域 toDataURL不能读取问题 参见问题1	
+				//
+				//img.onload = function() {
+				//	ctx.drawImage(img, 260, 50, 100, 66);
+				//};
+				//img.src = "logo.png";				
 				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(0, 5, 400, 25);
+				ctx.fillRect(0, 5, 400, 15);
 				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(0, 270, 400, 25);
+				ctx.fillRect(0, 280, 400, 15);
 
 				ctx.fillStyle = basebackstyle;
 				ctx.fillRect(20, 50, 100, 50);
@@ -68,16 +146,33 @@
 				ctx.fillRect(20, 150, 360, 50);
 
 				//设置字体样式
-				ctx.font = "25px Courier New";
+				ctx.font = "20px NSimSun";
 				//设置字体填充颜色
 				ctx.fillStyle = basetextstyle;
 				//从坐标点(50,50)开始绘制文字
+				ctx.fillText(yunyingshang, 260, 80);
 				ctx.fillText(banci, 50, 80);
 				ctx.fillText(zaowan, 130, 80);
 				ctx.fillText(luxianmingcheng, 50, 130);
-				ctx.fillText("到站：" + daozhan, 50, 180);
-				ctx.fillText("下一站：" + xiayizhan, 50, 250);
+				ctx.font = "25px NSimSun";
+				ctx.fillText("到站：" + daozhan, 20, 180);
 
+				ctx.font = "20px NSimSun";
+
+				ctx.fillText("下一站：" + xiayizhan, 50, 250);
+				ctx.fill();
+			}
+			return canvas;
+		}
+
+		// Firefox, Google Chrome, Opera, Safari, Internet Explorer from version 9
+		function OnInput(event) {
+			gen();
+		}
+		// Internet Explorer
+		function OnPropChanged(event) {
+			if (event.propertyName.toLowerCase() == "value") {
+				gen();
 			}
 		}
 	</script>
