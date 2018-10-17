@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>彩虹巴士报站图片生成器</title>
+<title>巴士报站图片生成器</title>
 <script src="jscolor.js"></script>
 <style>
 body {
@@ -52,19 +52,34 @@ a:link {
 		<a href="http://www.miitbeian.gov.cn/" style="opacity: 1;"
 			target="_blank">京ICP备14044747号</a>
 	</div>
-<br><br><br><br><br>
-	班次：
-	<input id="banci" type="text" value="W66" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<br>
+	<br>
+	<br>
+	<br>
+	<br> 班次：
+	<input id="banci" type="text" value="W66" oninput="OnInput (event)"
+		onpropertychange="OnPropChanged (event)">
 	<br> 早晚：
-	<input id="zaowan" type="text" value="早  班" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)" >
+	<input id="zaowan" type="text" value="早  班" oninput="OnInput (event)"
+		onpropertychange="OnPropChanged (event)">
 	<br> 运营商：
-	<input id="yunyingshang" type="text" value="彩虹" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<select id="yunyingshangflag">
+		<option value="icon">上传图片</option>
+		<option value="text" selected="selected">添加文本</option>
+	</select>
+	<input id="yunyingshangtext" type="text" value="彩虹"
+		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input type="file" name="file2" id="change2" style="display: none;">
+
 	<br> 路线名称：
-	<input id="luxianmingcheng" type="text" value="物资学院-望京" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="luxianmingcheng" type="text" value="物资学院-望京"
+		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
 	<br> 到站：
-	<input id="daozhan" type="text" value="物资学院路地铁站A口" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="daozhan" type="text" value="物资学院路地铁站A口"
+		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
 	<br> 下站：
-	<input id="xiayizhan" type="text" value="草房地铁站B口" oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="xiayizhan" type="text" value="草房地铁站B口"
+		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
 	<br>
 	<button
 		class="jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)'}">
@@ -72,7 +87,7 @@ a:link {
 	<button
 		class="jscolor {valueElement:'chosen-value', onFineChange:'setBackColor(this)'}">
 		背景颜色</button>
-<!-- 	<input type="button" value="生成" onclick="javascript:gen();"> -->
+	<!-- 	<input type="button" value="生成" onclick="javascript:gen();"> -->
 	<input type="button" value="下载"
 		onclick="javascript:downloadimg(gen(),'pic.jpg');">
 	<br>
@@ -100,9 +115,27 @@ a:link {
 			a.download = name;
 			a.click();
 		}
+
+		document.getElementById("yunyingshangflag").onchange = function(event) {
+			if (this.value == 'icon') {
+				document.getElementById("change2").style.display = "inline";
+				document.getElementById("yunyingshangtext").style.display = "none";
+			}
+			if (this.value == 'text') {
+				document.getElementById("change2").style.display = "none";
+				document.getElementById("yunyingshangtext").style.display = "inline";
+			}
+			gen();
+		}
+
 		var gen = function() {
 			//文案定义
 			var canvas = document.getElementById("myCanvas");
+			var yunyingshangflag = document.getElementById("yunyingshangflag").value;
+
+			var yunyingshang = document.getElementById("yunyingshangtext").value ? document
+					.getElementById("yunyingshangtext").value
+					: "彩虹";
 			//班次
 			var banci = document.getElementById("banci").value ? document
 					.getElementById("banci").value : "W66";
@@ -116,9 +149,10 @@ a:link {
 			var xiayizhan = document.getElementById("xiayizhan").value ? document
 					.getElementById("xiayizhan").value
 					: "草房地铁站B口";
-			var yunyingshang = document.getElementById("yunyingshang").value ? document
-					.getElementById("yunyingshang").value
-					: "彩虹";
+			// 			var yunyingshang = document.getElementById("yunyingshang").value ? document
+			// 					.getElementById("yunyingshang").value
+			// 					: "彩虹";
+			var change2 = document.getElementById('change2')
 
 			//获取Canvas对象(画布)
 			//简单地检测当前浏览器是否支持Canvas对象，以免在一些不支持html5的浏览器中提示语法错误
@@ -127,13 +161,11 @@ a:link {
 				var ctx = canvas.getContext("2d");
 				ctx.fillStyle = "#ffffff";
 				ctx.fillRect(0, 0, 400, 300);
-				//var img = new Image();
-				//解决 canvas 跨域 toDataURL不能读取问题 参见问题1	
-				//
-				//img.onload = function() {
-				//	ctx.drawImage(img, 260, 50, 100, 66);
-				//};
-				//img.src = "logo.png";				
+
+				if ('icon' == yunyingshangflag && img2.complete) {
+					ctx.drawImage(img2, 260, 50, 88, 88);
+				}
+
 				ctx.fillStyle = basebackstyle;
 				ctx.fillRect(0, 5, 400, 15);
 				ctx.fillStyle = basebackstyle;
@@ -150,7 +182,9 @@ a:link {
 				//设置字体填充颜色
 				ctx.fillStyle = basetextstyle;
 				//从坐标点(50,50)开始绘制文字
-				ctx.fillText(yunyingshang, 260, 80);
+				if ('text' == yunyingshangflag) {
+					ctx.fillText(yunyingshang, 260, 80);
+				}
 				ctx.fillText(banci, 50, 80);
 				ctx.fillText(zaowan, 130, 80);
 				ctx.fillText(luxianmingcheng, 50, 130);
@@ -165,6 +199,17 @@ a:link {
 			return canvas;
 		}
 
+		var img2 = new Image()
+		img2.crossOrigin = 'anonymous'
+		change2.onchange = function(event) {
+			var file = event.target.files[0];
+			var url = window.URL.createObjectURL(file);
+			img2.src = url;
+
+		}
+		change2.onblur = function(event) {
+			gen();
+		}
 		// Firefox, Google Chrome, Opera, Safari, Internet Explorer from version 9
 		function OnInput(event) {
 			gen();
