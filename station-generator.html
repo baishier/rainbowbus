@@ -172,10 +172,10 @@ a:link {
 				ctx.fillRect(0, 280, 400, 15);
 
 				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(20, 50, 100, 50);
+				ctx.fillRect(20, 30, 100, 30);
 
 				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(20, 150, 360, 50);
+				ctx.fillRect(20, 120, 360, 110);
 
 				//设置字体样式
 				ctx.font = "20px NSimSun";
@@ -183,14 +183,14 @@ a:link {
 				ctx.fillStyle = basetextstyle;
 				//从坐标点(50,50)开始绘制文字
 				if ('text' == yunyingshangflag) {
-					ctx.fillText(yunyingshang, 260, 80);
+					ctx.fillText(yunyingshang, 260, 50);
 				}
-				ctx.fillText(banci, 50, 80);
-				ctx.fillText(zaowan, 130, 80);
-				ctx.fillText(luxianmingcheng, 50, 130);
-				ctx.font = "25px NSimSun";
-				ctx.fillText("到站：" + daozhan, 20, 180);
-
+				ctx.fillText(banci, 50, 50);
+				ctx.fillText(zaowan, 130, 50);
+				ctx.fillText(luxianmingcheng, 50, 100);
+				ctx.font = "35px NSimSun";
+				//ctx.fillText("到站：" + daozhan, 20, 180);
+				canvasTextAutoLine("到站：" + daozhan,canvas,20, 160,40);
 				ctx.font = "20px NSimSun";
 
 				ctx.fillText("下一站：" + xiayizhan, 50, 250);
@@ -220,6 +220,32 @@ a:link {
 				gen();
 			}
 		}
+		/*
+		str:要绘制的字符串
+		ctx:ctx
+		initX:绘制字符串起始x坐标
+		initY:绘制字符串起始y坐标
+		lineHeight:字行高，自己定义个值即可
+		*/
+		function canvasTextAutoLine(str,canvasp,initX,initY,lineHeight){
+		var ctx = canvasp.getContext("2d"); 
+		var lineWidth = 0;
+			var canvasWidth = canvasp.width; 
+			var lastSubStrIndex= 0; 
+			for(let i=0;i<str.length;i++){ 
+				lineWidth+=ctx.measureText(str[i]).width; 
+				if(lineWidth>canvasWidth-initX){//减去initX,防止边界出现的问题
+					ctx.fillText(str.substring(lastSubStrIndex,i),initX,initY);
+					initY+=lineHeight;
+					lineWidth=0;
+					lastSubStrIndex=i;
+				} 
+				if(i==str.length-1){
+					ctx.fillText(str.substring(lastSubStrIndex,i+1),initX,initY);
+				}
+			}
+		  }
+		
 	</script>
 	<br>
 	<a href="https://github.com/baishier/rainbowbus">github</a>
