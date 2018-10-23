@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <title>巴士报站图片生成器</title>
 <script src="jscolor.js"></script>
+<script src="jquery.min.js"></script>
+<script src="jcanvas.min.js"></script>
+<script src="station-generator.js"></script>
 <style>
 body {
 	margin: 0;
@@ -42,211 +45,50 @@ a:link {
 }
 </style>
 </head>
-<body onload="javascript:gen();">
+<body>
 	<div
 		style="text-align: center; position: fixed; background-color: black; height: 0px; width: 100%; top: 0px; opacity: 0.5;">
 		<p style="text-align: center; font-size: 30px; color: #A0A0A0;">百释而然</p>
 	</div>
 	<div
 		style="text-align: center; position: fixed; background-color: black; height: 25px; width: 100%; bottom: 0px; opacity: 0.5;">
-		<a href="http://www.miitbeian.gov.cn/" style="opacity: 1;"
-			target="_blank">京ICP备14044747号</a>
+		<a href="http://www.miitbeian.gov.cn/" style="opacity: 1;" target="_blank">京ICP备14044747号</a>
 	</div>
 	<br>
 	<br>
-	<br>
-	<br>
 	<br> 班次：
-	<input id="banci" type="text" value="W66" oninput="OnInput (event)"
-		onpropertychange="OnPropChanged (event)">
+	<input id="banci" type="text" value="W669">
 	<br> 早晚：
-	<input id="zaowan" type="text" value="早  班" oninput="OnInput (event)"
-		onpropertychange="OnPropChanged (event)">
+	<input id="zaowan" type="text" value="早  班">
 	<br> 运营商：
-	<select id="yunyingshangflag">
-		<option value="icon">上传图片</option>
+	<select id="yysflag">
 		<option value="text" selected="selected">添加文本</option>
+		<option value="icon">上传图片</option>
 	</select>
-	<input id="yunyingshangtext" type="text" value="彩虹"
-		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
-	<input type="file" name="file2" id="change2" style="display: none;">
-
+	<input id="yystext" type="text" value="彩虹">
+	<input type="file" name="fish" id="fish" style="display: none;">
 	<br> 路线名称：
-	<input id="luxianmingcheng" type="text" value="物资学院-望京"
-		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="luxianmingcheng" type="text" value="物资学院-望京">
 	<br> 到站：
-	<input id="daozhan" type="text" value="物资学院路地铁站A口"
-		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="daozhan" type="text" value="物资学院路地铁站A口">
 	<br> 下站：
-	<input id="xiayizhan" type="text" value="草房地铁站B口"
-		oninput="OnInput (event)" onpropertychange="OnPropChanged (event)">
+	<input id="xiayizhan" type="text" value="草房地铁站B口">
+<!-- 	<br> basetextleftmargin： -->
+<!-- 	<input id="basetextleftmargin" type="text" value="30"> -->
 	<br>
-	<button
-		class="jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)'}">
+	<button id="zitiyanse" class="jscolor {valueElement:'chosen-value', onFineChange:'setTextColor(this)'}">
 		字体颜色</button>
-	<button
-		class="jscolor {valueElement:'chosen-value', onFineChange:'setBackColor(this)'}">
+	<button id="beijingyanse" class="jscolor {valueElement:'chosen-value', onFineChange:'setBackColor(this)'}">
 		背景颜色</button>
 	<!-- 	<input type="button" value="生成" onclick="javascript:gen();"> -->
-	<input type="button" value="下载"
-		onclick="javascript:downloadimg(gen(),'pic.jpg');">
+	<input type="button" value="下载" onclick="javascript:downloadimg(genImg(),'pic.jpg');">
+<!-- 	<input type="button" value="生成" onclick="javascript:genImg();"> -->
 	<br>
 	<!-- 添加canvas标签，并加上红色边框以便于在页面上查看 -->
-	<canvas id="myCanvas" width="400px" height="300px"
-		style="border: 1px solid red;">
-您的浏览器不支持canvas标签。
-</canvas>
+	<canvas id="myCanvas" width="400px" height="300px" style="border: 1px solid red;">
+	您的浏览器不支持canvas标签。
+	</canvas>
 
-	<script type="text/javascript">
-		var basetextstyle = "#FF6600";
-		var basebackstyle = "#99CCF0";
-		function setTextColor(picker) {
-			basetextstyle = '#' + picker.toString();
-			gen();
-		}
-		function setBackColor(picker) {
-			basebackstyle = '#' + picker.toString();
-			gen();
-		}
-
-		var downloadimg = function(canvas, name) {
-			var a = document.createElement("a");
-			a.href = canvas.toDataURL();
-			a.download = name;
-			a.click();
-		}
-
-		document.getElementById("yunyingshangflag").onchange = function(event) {
-			if (this.value == 'icon') {
-				document.getElementById("change2").style.display = "inline";
-				document.getElementById("yunyingshangtext").style.display = "none";
-			}
-			if (this.value == 'text') {
-				document.getElementById("change2").style.display = "none";
-				document.getElementById("yunyingshangtext").style.display = "inline";
-			}
-			gen();
-		}
-
-		var gen = function() {
-			//文案定义
-			var canvas = document.getElementById("myCanvas");
-			var yunyingshangflag = document.getElementById("yunyingshangflag").value;
-
-			var yunyingshang = document.getElementById("yunyingshangtext").value ? document
-					.getElementById("yunyingshangtext").value
-					: "彩虹";
-			//班次
-			var banci = document.getElementById("banci").value ? document
-					.getElementById("banci").value : "W66";
-			var zaowan = document.getElementById("zaowan").value ? document
-					.getElementById("zaowan").value : "早  班";
-			var luxianmingcheng = document.getElementById("luxianmingcheng").value ? document
-					.getElementById("luxianmingcheng").value
-					: "物资学院-望京";
-			var daozhan = document.getElementById("daozhan").value ? document
-					.getElementById("daozhan").value : "物资学院路地铁站A口";
-			var xiayizhan = document.getElementById("xiayizhan").value ? document
-					.getElementById("xiayizhan").value
-					: "草房地铁站B口";
-			// 			var yunyingshang = document.getElementById("yunyingshang").value ? document
-			// 					.getElementById("yunyingshang").value
-			// 					: "彩虹";
-			var change2 = document.getElementById('change2')
-
-			//获取Canvas对象(画布)
-			//简单地检测当前浏览器是否支持Canvas对象，以免在一些不支持html5的浏览器中提示语法错误
-			if (canvas.getContext) {
-				//获取对应的CanvasRenderingContext2D对象(画笔)
-				var ctx = canvas.getContext("2d");
-				ctx.fillStyle = "#ffffff";
-				ctx.fillRect(0, 0, 400, 300);
-
-				if ('icon' == yunyingshangflag && img2.complete) {
-					ctx.drawImage(img2, 260, 50, 88, 88);
-				}
-
-				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(0, 5, 400, 15);
-				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(0, 280, 400, 15);
-
-				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(20, 30, 100, 30);
-
-				ctx.fillStyle = basebackstyle;
-				ctx.fillRect(20, 120, 360, 110);
-
-				//设置字体样式
-				ctx.font = "20px NSimSun";
-				//设置字体填充颜色
-				ctx.fillStyle = basetextstyle;
-				//从坐标点(50,50)开始绘制文字
-				if ('text' == yunyingshangflag) {
-					ctx.fillText(yunyingshang, 260, 50);
-				}
-				ctx.fillText(banci, 50, 50);
-				ctx.fillText(zaowan, 130, 50);
-				ctx.fillText(luxianmingcheng, 50, 100);
-				ctx.font = "35px NSimSun";
-				//ctx.fillText("到站：" + daozhan, 20, 180);
-				canvasTextAutoLine("到站：" + daozhan,canvas,20, 160,40);
-				ctx.font = "20px NSimSun";
-
-				ctx.fillText("下一站：" + xiayizhan, 50, 250);
-				ctx.fill();
-			}
-			return canvas;
-		}
-
-		var img2 = new Image()
-		img2.crossOrigin = 'anonymous'
-		change2.onchange = function(event) {
-			var file = event.target.files[0];
-			var url = window.URL.createObjectURL(file);
-			img2.src = url;
-
-		}
-		change2.onblur = function(event) {
-			gen();
-		}
-		// Firefox, Google Chrome, Opera, Safari, Internet Explorer from version 9
-		function OnInput(event) {
-			gen();
-		}
-		// Internet Explorer
-		function OnPropChanged(event) {
-			if (event.propertyName.toLowerCase() == "value") {
-				gen();
-			}
-		}
-		/*
-		str:要绘制的字符串
-		ctx:ctx
-		initX:绘制字符串起始x坐标
-		initY:绘制字符串起始y坐标
-		lineHeight:字行高，自己定义个值即可
-		*/
-		function canvasTextAutoLine(str,canvasp,initX,initY,lineHeight){
-		var ctx = canvasp.getContext("2d"); 
-		var lineWidth = 0;
-			var canvasWidth = canvasp.width; 
-			var lastSubStrIndex= 0; 
-			for(let i=0;i<str.length;i++){ 
-				lineWidth+=ctx.measureText(str[i]).width; 
-				if(lineWidth>canvasWidth-initX){//减去initX,防止边界出现的问题
-					ctx.fillText(str.substring(lastSubStrIndex,i),initX,initY);
-					initY+=lineHeight;
-					lineWidth=0;
-					lastSubStrIndex=i;
-				} 
-				if(i==str.length-1){
-					ctx.fillText(str.substring(lastSubStrIndex,i+1),initX,initY);
-				}
-			}
-		  }
-		
-	</script>
 	<br>
 	<a href="https://github.com/baishier/rainbowbus">github</a>
 
