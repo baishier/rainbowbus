@@ -7,6 +7,13 @@ var getBasetextleftmargi = function() {
 	return 30;
 	// return parseInt($("#basetextleftmargin").val());
 }
+var getdztextleftmargi = function() {
+	//console.log((400-($("#daozhan").val().length*30))/2);
+	//console.log($("#myCanvas").measureText('dzText').width);
+	var lef = (400-($("#daozhan").val().length*30))/2;
+	return lef > 30 ? lef : 30;
+	// return parseInt($("#basetextleftmargin").val());
+}
 
 var setTextColor = function(picker) {
 	basetextstyle = "#" + picker.toString();
@@ -179,6 +186,7 @@ var gendz = function(mycanvas, dz) {
 		y : 160
 	});
 	mycanvas.drawText({
+		name : "dzText",
 		fillStyle : basetextstyle,
 		fontStyle : "bold",
 		fontSize : "25pt",
@@ -186,7 +194,7 @@ var gendz = function(mycanvas, dz) {
 		align : 'left',
 		respectAlign : true,
 		text : dz,
-		x : getBasetextleftmargi(),
+		x : getdztextleftmargi(),
 		y : 160
 	});
 }
